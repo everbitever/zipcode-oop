@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <h4>Lista miast</h4>
+
+    {% for town in town_tbl %}
+        <div class="row">
+            <p>
+                {{ town.name }}
+                <a href="{{ path('town_delete', {'id': town.id}) }}" class="btn btn-danger">Usuń</a>
+            </p>
+        </div>
+    {% endfor %}
+
+    <div class="paging mt-3 mb-3">
+        {{ knp_pagination_render(town_tbl) }}
+    </div>
+{% endblock %}

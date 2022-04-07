@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Zip codes{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="{{ app.request.schemeAndHttpHost }}" />
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
+    {% endblock %}
+</head>
+<body>
+<div class="container-fluid header"></div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+    <div class="container">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {% if app.request.get('_route') == 'town' %}active{% endif %}">
+                    <a class="nav-link" href="{{ path('town') }}">Lista miast</a>
+                </li>
+                <li class="nav-item {% if app.request.get('_route') == 'town_add' %}active{% endif %}">
+                    <a class="nav-link" href="{{ path('town_add') }}">Dodaj miasto</a>
+                </li>
+                <li class="nav-item {% if app.request.get('_route') == 'zipcode' %}active{% endif %}">
+                    <a class="nav-link" href="{{ path('zipcode') }}">Lista kodów</a>
+                </li>
+                <li class="nav-item {% if app.request.get('_route') == 'zipcode_add' %}active{% endif %}">
+                    <a class="nav-link" href="{{ path('zipcode_add') }}">Dodaj kod</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container content">
+    {% block body %}{% endblock %}
+</div>
+
+<div class="container-fluid footer"></div>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    <script src="{{ asset('assets/js/jquery-3.4.1.slim.min.js') }}"></script>
+    <script src="{{ asset('assets/js/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/script.js') }}"></script>
+{% endblock %}
+</body>
+</html>
