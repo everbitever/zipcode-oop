@@ -16,8 +16,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ZipcodeRepository extends ServiceEntityRepository
 {
-    private $entityManagerInterface;
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Zipcode::class);
