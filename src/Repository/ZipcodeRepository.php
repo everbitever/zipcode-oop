@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Zipcode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,27 +18,36 @@ class ZipcodeRepository extends ServiceEntityRepository
 {
     private $entityManagerInterface;
 
-    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Zipcode::class);
-
-        $this->entityManager = $entityManager;
     }
 
     public function getTownWithCode(String $search)
     {
-        $where = '';
+        $query = $this->createQueryBuilder('z');
+        $query->select('z.id, z.code, t.name');
+        $query->innerJoin('z.town', 't');
+        if(!empty($search))
+        {
+            $query->where('z.code = :search');
+            $query->setParameter('search', $search);
+        }
+        $query->orderBy('t.name', 'ASC');
+        $query->addOrderBy('z.code', 'ASC');
+        $query->getQuery()->execute();
 
-        if(!empty($search)) $where = 'AND z.code = \''.$search.'\'';
+        return $query;
+    }
 
-        $sql = '
-            SELECT z.id, z.code, t.name
-            FROM App\Entity\Zipcode z INNER JOIN App\Entity\Town t WITH z.town = t.id
-            WHERE 1=1 '.$where.'
-            ORDER BY t.name ASC, z.code ASC
-        ';
-
-        return $this->entityManager->createQuery($sql)->getResult();
+    public function deleteAllCodeWithTown(int $town)
+    {
+        return $this->createQueryBuilder('z')
+            ->delete()
+            ->where('z.town = :town')
+            ->setParameter('town', $town)
+            ->getQuery()
+            ->execute();
     }
 
     // /**

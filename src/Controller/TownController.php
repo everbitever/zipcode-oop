@@ -5,12 +5,12 @@ namespace App\Controller;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Town;
-use App\Entity\Zipcode;
 use App\Form\TownFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Component\ValidateTown;
+use App\Repository\ZipcodeRepository;
 
 class TownController extends AbstractController
 {
@@ -42,15 +42,9 @@ class TownController extends AbstractController
     /**
      * @Route("/town/delete/{id}", name="town_delete")
      */
-    public function town_delete(int $id, Town $town)
+    public function town_delete(int $id, Town $town, ZipcodeRepository $zipcodeRepository)
     {
-        $zipcode = $this->entityManager->getRepository(Zipcode::class)->findBy(['town' => $id]);
-
-        foreach($zipcode as $code)
-        {
-            $this->entityManager->remove($code);
-            $this->entityManager->flush();
-        }
+        $zipcodeRepository->deleteAllCodeWithTown($id);
 
         $this->entityManager->remove($town);
         $this->entityManager->flush();
